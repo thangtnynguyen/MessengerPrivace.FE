@@ -1,0 +1,138 @@
+<div class="row login-box">
+
+	<div class="col-md-6 col-lg-6 col-6 box-left position-relative">
+		<img src="../../../../assets/banners/login/banner-img.png" alt="">
+		<img src="../../../../assets/banners/login/object-bycicle.png" alt="">
+		<img src="../../../../assets/banners/login/object-moto-bike.png" alt="">
+		<div class="position-absolute-custom">
+			<img src="../../../../assets/banners/login/plain.png" alt="">
+		</div>
+
+	</div>
+
+	<div class="col-md-6 col-lg-6 col-6 box-right   d-flex align-items-center  justify-content-center flex-column  ">
+
+		<div class="rounder-box mb-2">
+			<img src="assets/icons/icons8-rubik-64.png" alt="...">
+		</div>
+		<div class="name-box">
+			<p>TNY MESSENGER TNY</p>
+		</div>
+		<div class="text-box mb-5 d-flex flex-column align-items-center">
+			<small class="text-gray">Một ứng dụng nhắn tin vô cùng tiên lợi dành cho bạn</small>
+			<small class="text-gray">Dùng ngay hôm nay</small>
+		</div>
+		<form [formGroup]="loginForm" (submit)="handleOnSubmitLogin()" class="form-group row w-100 px-10">
+			<label *ngIf="value.length>0" for="username" class="custom-label-top">Email</label>
+			<p-floatLabel class="custom-label">
+				<input id="username" formControlName="email" name="email" type="text" placeholder="Email"  pInputText />
+				<!-- <label *ngIf="value.length==0" for="username">Email</label> -->
+			</p-floatLabel>
+
+			<p-password formControlName="password" name="password" [toggleMask]="true" />
+
+			<div class="row mb-5 ">
+				<div class="col-6  d-flex ">
+					<div>
+						<p-checkbox [binary]="true" inputId="binary" />
+					</div>
+					<small class="ms-2">Remember me </small>
+				</div>
+				<div class=" col-6 text-end">
+					<small class="ms-2">Forget password </small>
+
+				</div>
+			</div>
+
+			<button pButton pRipple label="Login" class="p-button-primary" type="submit">
+			</button>
+
+			<button class="btn btn-light btn-google mt-4 ">
+				<img src="assets/icons/icons8-google-48.png" alt="Google sign-in">
+				Sign in with Google
+			</button>
+
+		</form>
+		<div class="footer-login">
+			<small>Don't have an account yet? <span><strong class="strong-register">Register</strong></span></small>
+		</div>
+	</div>
+
+</div>
+
+<app-loading-spinner [isLoading]="isLoading"></app-loading-spinner>
+
+
+
+
+
+
+<!-- <ng-template #template>
+	<div class="modal-header border-0 d-flex flex-column ">
+		<div class="modal-header__icon d-flex justify-content-end  w-100">
+			<i class="fa-solid fa-xmark auth-modal__close-btn" (click)="closeModal()"></i>
+		</div>
+		<div class="d-flex flex-column align-items-center w-100">
+			<div class="modal-header logo-login">
+				<img src="assets/images/logoSMO.png" alt="SMO MEDIA">
+				<h3>SMO MEDIA</h3>
+			</div>
+		</div>
+	</div>
+	<div class="modal-body d-flex flex-column align-items-center  modal-login">
+		<div class="modal-body">
+			<div class="d-flex align-items-center justify-content-center">
+				<h2>ĐĂNG NHẬP</h2>
+			</div>
+			<form [formGroup]="loginForm" (submit)="handleOnSubmitLogin()">
+				<input formControlName="userName" name="userName" type="text" class="form-control" id="repeatPassword"
+					placeholder="Nhập email của bạn">
+				<app-validation-message [form]="loginForm" [messages]="validationMessages"
+					field="userName"></app-validation-message>
+
+				<div class="form-group auth-form-group-custom position-relative mt-4">
+					<div class="w-100 position-relative">
+						<input formControlName="password" [type]="passwordFieldType1" class="form-control" id="password"
+							placeholder="Nhập mật khẩu" name="password">
+						<i class="fas" [ngClass]="passwordFieldType1 === 'password' ? 'fa-eye' : 'fa-eye-slash'"
+							(click)="togglePasswordVisibility('passwordFieldType1')"
+							style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; position: absolute;"></i>
+					</div>
+					<app-validation-message [form]="loginForm" [messages]="validationMessages"
+						field="password"></app-validation-message>
+				</div>
+				<a [routerLink]="['/auth/forget']" (click)="closeModal()" class="forgot-password">Quên mật khẩu ?</a>
+				<button type="submit">ĐĂNG NHẬP</button>
+			</form>
+
+			<div class="text-center mt-3">
+				<p>Hoặc đăng nhập nhanh bằng tài khoản</p>
+				<button type="button" class="btn btn-outline-primary me-2 col-md-3">
+					<i class="pi pi-facebook"></i> Facebook
+				</button>
+				<button type="button" class="btn btn-outline-danger col-md-3">
+					<i class="pi pi-google"></i> Google
+				</button>
+			</div>
+		</div>
+
+
+		<div class="modal-body__wrapper">
+		</div>
+		<div class="modal-body__wrapper">
+			<div class="d-flex flex-column align-items-center">
+				<div class="auth-modal__register p-0">
+					Bạn chưa có tài khoản?
+					<span [routerLink]="['/auth/register']" (click)="closeModal()">
+						Đăng kí
+					</span>
+				</div>
+				<div class="auth-modal__term">
+					Việc bạn tiếp tục sử dụng trang web này đồng nghĩa bạn đồng ý với
+					<span>điều khoản sử dụng</span>
+					của chúng tôi.
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-template> -->

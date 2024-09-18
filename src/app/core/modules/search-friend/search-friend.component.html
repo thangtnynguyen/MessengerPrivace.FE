@@ -1,0 +1,22 @@
+<div class="contacts-container">
+	<!-- Danh sách liên hệ -->
+	<ul class="list-group">
+		<!-- Example Item -->
+		<li class="list-group-item">
+			<img src="https://th.bing.com/th/id/OIP.IaWA_y4fjw2HR4Ec_OxUmQAAAA?rs=1&pid=ImgDetMain" alt="Minh"
+				class="profile-img">
+			<div class="contact-info">
+				<div class="name">Minh</div>
+			</div>
+		</li>
+
+		<li class="list-group-item" *ngFor="let friend of friends" (click)="handleCreateConversation(friend)" (click)="handleShowMessengerBox()">
+			<img src="https://th.bing.com/th/id/OIP.IaWA_y4fjw2HR4Ec_OxUmQAAAA?rs=1&pid=ImgDetMain" alt="Minh"
+				class="profile-img">
+			<div class="contact-info">
+				<div class="name">{{friend.name}}</div>
+			</div>
+		</li>
+		<!-- Repeat for each contact -->
+	</ul>
+</div>

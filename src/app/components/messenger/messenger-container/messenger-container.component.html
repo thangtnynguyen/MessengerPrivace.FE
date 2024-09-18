@@ -1,0 +1,244 @@
+<div class="row messager-box">
+    <div class="col-12 d-flex p-0 justify-content-center">
+
+        <div class="col-xxl-3 col-lg-4 col-md-1  col-2  sidebar-vertical    d-flex">
+            <div class="col-lg-2 col-md-12 col-12  sidebar    ">
+                <div class="avatar-icon">
+                    <img src="assets/icons/icons8-rubik-50.png" class="rounded-circle">
+                    <span class="badge bg-danger">5+</span>
+                </div>
+                <div class="nav-icon active"><i class="fas fa-comments"></i></div>
+                <div class="nav-icon"><i class="fas fa-user"></i></div>
+                <div class="nav-icon"><i class="fas fa-envelope"></i></div>
+                <div class="nav-icon"><i class="fas fa-clipboard-list"></i></div>
+                <div class="nav-icon"><i class="fas fa-cog"></i></div>
+
+            </div>
+            <!-- Chat List -->
+            <div class="col-lg-10 col-md-10 col-10  bg-light  d-none d-lg-block ">
+                <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+                    <h6 class="m-0">{{userCurrent.userName}}</h6>
+                    <div>
+                        <i class="fas fa-user-friends mx-2"></i>
+                        <i class="fas fa-cog mx-2"></i>
+                    </div>
+                </div>
+                <div class="p-3 border-bottom d-flex">
+                    <input type="text" class="form-control" [(ngModel)]="keyWord" placeholder="Tìm kiếm"
+                        (focus)="onFocus()">
+                    <button *ngIf="isSearch==true" class="btn btn-primary-custom"
+                        (click)="isSearch = false">Đóng</button>
+
+                </div>
+
+                <app-search-friend (dataChatInfoEvent)="handleReceiveDataChatInfo($event)"
+                    (eventChange)="handleChangeMessengerBox()" *ngIf="isSearch" [keyWord]="keyWord"></app-search-friend>
+                <div *ngIf="!isSearch" class="p-3 border-bottom d-flex justify-content-between">
+                    <div class="text-primary">Tất cả</div>
+                    <div class="text-muted">Chưa đọc</div>
+                    <div class="text-muted">Phân loại</div>
+                    <i class="fas fa-ellipsis-h text-muted"></i>
+                </div>
+                <div *ngIf="!isSearch" class="chat-list">
+                    <div *ngFor="let conversation of conversations"
+                        class="d-flex align-items-center p-3 border-bottom text-dark"
+                        (click)="handleChangeMessengerBox(conversation)">
+                        <img [src]="baseImageUrl+conversation.participantInfos[0].avatarUrl" class="rounded-circle"
+                            width="40">
+                        <div class="ml-3 w-100">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{conversation.participantInfos[0].name}}</strong>
+                                <small
+                                    class="text-muted">{{convertTimeToRelative(conversation.messenger.sentTime)}}</small>
+                            </div>
+                            <div class="d-flex justify-content-between ">
+                                <span *ngIf="conversation.messenger.content" class="text-muted ms-3">
+                                    {{conversation.messenger.content}}</span>
+                                <span *ngIf="conversation.messenger.messengerType=='icon'" class="text-muted ms-3">
+                                    <img src="{{baseImageUrl+conversation.messenger.icon.url}}">
+                                </span>
+                                <span *ngIf="conversation.messenger.medias.length>0"
+                                    [ngSwitch]="conversation.messenger.medias[0].type" class="text-muted ms-3">
+                                    <img *ngSwitchCase="'other'" src="assets/icons/icons8-file-48.png" alt="icon"
+                                        class="image-last-messenger">
+                                    <img *ngSwitchCase="'excel'" src="assets/icons/icons8-excel-48.png" alt="icon"
+                                        class="image-last-messenger">
+                                    <img *ngSwitchCase="'powerpoint'" src="assets/icons/icons8-powerpoint-file-48.png"
+                                        alt="icon" class="image-last-messenger">
+                                    <img *ngSwitchCase="'word'" src="assets/icons/icons8-word-48.png" alt="icon"
+                                        class="image-last-messenger">
+                                    <img *ngSwitchCase="'image'" src="assets/icons/icons8-image-48.png" alt="icon"
+                                        class="image-last-messenger">
+                                    <img *ngSwitchCase="'audio'" src="assets/icons/icons8-audio-48.png" alt="icon"
+                                        class="image-last-messenger">
+                                    <span *ngSwitchCase="'image'" class="fs-12">Đã gửi một ảnh</span>
+                                    <span *ngSwitchCase="'audio'" class="fs-12">Đã gửi một âm thanh</span>
+                                    <span *ngSwitchCase="'pdf'" class="fs-12">Đã gửi một file</span>
+                                    <span *ngSwitchCase="'word'" class="fs-12">Đã gửi một file</span>
+                                    <span *ngSwitchCase="'excel'" class="fs-12">Đã gửi một file</span>
+                                    <span *ngSwitchCase="'other'" class="fs-12">Đã gửi một file</span>
+                                </span>
+                                <span
+                                    *ngIf="conversation.messenger.status=='sent' && conversation.messenger.senderId!=userCurrent.id "
+                                    class="badge badge-danger"><i
+                                        class="fa-solid fa-circle-dot text-red text-danger"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Chat Window -->
+        <div *ngIf="!isMessengerBoxBlank" class="col-xxl-7 col-lg-8 col-md-12 col-12  d-flex flex-column">
+            <div class="chat-header p-3 d-flex align-items-center text-white rounded">
+                <img src="assets/icons/icons8-rubik-50.png" class="rounded-circle" width="40">
+                <h5>Chat with {{infoConversation?.name}}</h5>
+                <div class="icon-call">
+                    <i class="fa-solid fa-person-circle-plus me-2"
+                        (click)="sendInvitationModalComponent.openModal()"></i>
+                    <i class="fa-solid fa-phone-flip me-2" (click)="callModalComponent.openModal(false)"></i>
+                    <i class="fa-solid fa-video" (click)="callModalComponent.openModal(true)"></i>
+                </div>
+            </div>
+            <div class="d-flex align-items-center custom-send-invite">
+                <span class="me-2">
+                    <i class="bi bi-person"></i>
+                    Gửi yêu cầu kết bạn tới người này
+                </span>
+                <button class="btn btn-light border ms-auto">Gửi kết bạn</button>
+                <div class="custom-dropdown ms-2">
+                    <button class="btn btn-light" type="button" (click)="toggleDropdown()">
+                        ...
+                    </button>
+                    <ul class="dropdown-menu-custom" *ngIf="isDropdownVisible">
+                        <li><a class="dropdown-item" href="#">Action 1</a></li>
+                        <li><a class="dropdown-item" href="#">Action 2</a></li>
+                        <li><a class="dropdown-item" href="#">Action 3</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="chat-messages ">
+                <app-messenger-box [conversationId]="infoConversation?.id"
+                    [lastMessengerId]="infoConversation.messenger.id"
+                    [lastSendId]="infoConversation.messenger.senderId"></app-messenger-box>
+            </div>
+            <!-- Chat input -->
+            <div class="chat-input">
+                <div class="preview-custom" *ngIf="messenger.images && messenger.images.length > 0">
+                    <div class="d-flex align-items-center mt-2 px-3">
+                        <strong>{{messenger.images.length}} ảnh</strong>
+                        <small *ngIf="messenger.images.length>0" (click)="removeAllImages()"
+                            class="small-delete-all">Xóa
+                            tất cả</small>
+                    </div>
+                    <div class="preview-images mt-3 px-1" *ngIf="messenger.images && messenger.images.length > 0">
+                        <div *ngFor="let img of messenger.images; let i = index"
+                            class="position-relative image-preview">
+                            <img [src]="img" class="img-thumbnail" />
+                            <i (click)="removeImage(i)"
+                                class=" button-remove fa-regular fa-trash-can   position-absolute top-0 end-0 "></i>
+                        </div>
+                        <div (click)="triggerImageInput()"
+                            class="d-flex justify-content-center align-items-center add-image-preview">
+                            <i class="fa-solid fa-image img-thumbnail "></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-custom" *ngIf="messenger.files && messenger.files.length > 0">
+                    <div class="d-flex align-items-center mt-2 px-3">
+                        <strong>{{messenger.files.length}} file</strong>
+                        <small *ngIf="messenger.files.length>0" (click)="removeAllFiles()" class="small-delete-all">Xóa
+                            tất cả</small>
+                    </div>
+                    <div class="preview-images mt-3 px-1" *ngIf="messenger.files && messenger.files.length > 0">
+                        <div *ngFor="let img of messenger.files; let i = index"
+                            class="position-relative file-preview d-flex align-items-center me-2">
+                            <i class="fa-solid fa-file me-2"></i>
+                            <p class="mb-0">{{img}}</p>
+                            <i (click)="removeFile(i)"
+                                class="button-remove fa-regular fa-trash-can position-absolute top-50 end-0 translate-middle-y"></i>
+                        </div>
+
+                        <div (click)="triggerFileInput()"
+                            class="d-flex justify-content-center align-items-center add-image-preview">
+                            <i class="fa-solid fa-file img-thumbnail "></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- icons -->
+                <div *ngIf="isShowIcons" class="container-icons">
+                    <div class="row  p-2">
+                        <div (click)="handleSendIcon(icon)"
+                            class="icon-col d-flex align-items-center justify-content-center p-1"
+                            *ngFor="let icon of icons">
+                            <img [src]="baseImageUrl+icon.url" class="img-fluid" alt="Icon Image">
+                        </div>
+                        <div (click)="handleCloseListIcons()"
+                            class="icon-col d-flex align-items-center justify-content-center p-1">
+                            <i class="fa-solid fa-circle-xmark img-fluid"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex-custom p-3 align-items-center ">
+                    <button class="icon-btn" (click)="handleOpenListIcons()"><i class="fas fa-smile"></i></button>
+                    <button class="icon-btn" (click)="triggerFileInput()"><i class="fas fa-paperclip"></i></button>
+                    <button class="icon-btn" (click)="triggerImageInput()"><i class="fas fa-camera"></i></button>
+                    <button class="icon-btn"><i class="fas fa-microphone"></i></button>
+                    <textarea class="form-control flex-grow-1 mx-2 textarea-custom"
+                        placeholder="Nhập @, tin nhắn tới người này" [(ngModel)]="messenger.content"
+                        (keyup.enter)="handleSendMessenger()"></textarea>
+                    <input type="file" #imageInput (change)="onImageSelected($event)" accept="image/*" multiple
+                        style="display: none;">
+                    <input type="file" #fileInput (change)="onFileSelected($event)" accept="*" multiple
+                        style="display: none;">
+                    <button class="send-btn" (click)="handleSendMessenger()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- Chat Details -->
+        <div *ngIf="!isMessengerBoxBlank" class="col-xxl-2 col-lg-2 col-md-2 col-2 bg-light d-none d-xxl-block">
+            <app-messenger-information></app-messenger-information>
+        </div>
+
+
+        <div *ngIf="isMessengerBoxBlank" class="col-xxl-9 col-lg-8 col-md-11  col-10">
+            <app-messenger-introduce></app-messenger-introduce>
+        </div>
+
+
+    </div>
+
+    <!-- More messengers... -->
+    <!-- <button (click)="changeBackground('blue')">Background 1</button>
+               <button (click)="changeBackground('green')">Background 2</button>
+               <button (click)="changeBackground('red')">Background 3</button> -->
+
+</div>
+
+<app-call-modal [infoConversation]="infoConversation" [infoCallSession]="this.infoCallSession"></app-call-modal>
+<app-send-invitation-modal></app-send-invitation-modal>
+
+<div class="modal-overlay" *ngIf="isCallRequest==true">
+    <div class="video-call-modal">
+        <div class="avatar-container">
+            <div class="avatar-wave">
+                <img src="https://via.placeholder.com/150" class="avatar-img" alt="Avatar">
+            </div>
+        </div>
+        <div class="buttons-container">
+            <button class="btn btn-danger reject-button" (click)="handleRejectCallVideoRequest()">
+                <i class="bi bi-telephone-x"></i> Từ chối
+            </button>
+            <button class="btn btn-success accept-button" (click)="handleAcceptCallVideoRequest()" >
+                <i class="bi bi-camera-video"></i> Trả lời
+            </button>
+        </div>
+    </div>
+</div>

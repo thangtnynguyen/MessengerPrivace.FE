@@ -1,0 +1,47 @@
+.contacts-container {
+    width: 100%; /* Full width */
+    background-color: #ffffff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+  }
+  
+  .search-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+  }
+  
+  .search-bar .form-control {
+    flex-grow: 1; /* Input field takes up maximum space */
+    margin-right: 8px; /* Space between input and button */
+  }
+  
+  .close-button {
+    background-color: #007bff; /* Blue background */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+  
+  .list-group-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+  }
+  
+  .profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Circular image */
+    margin-right: 16px; /* Space between image and text */
+  }
+  
+  .contact-info .name {
+    font-weight: bold;
+  }
+  
+  .contact-info .status {
+    font-size: 0.8rem;
+    color: gray;
+  }
+  

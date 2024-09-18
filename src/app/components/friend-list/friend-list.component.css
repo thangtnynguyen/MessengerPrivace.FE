@@ -1,0 +1,6 @@
+.friend-list .list-group-item-action {
+    border: none; 
+}
+.friend-list .list-group-item:hover {
+    background-color: #f8f9fa; 
+}

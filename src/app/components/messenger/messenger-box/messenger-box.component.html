@@ -1,0 +1,159 @@
+<div class="col-12 px-3" *ngIf="messengers.length>0">
+    <button (click)="scrollToBottom()">Thành công</button>
+    <div class="col-md-12 messages-container" #messengersContainer>
+        <ul class="list-group">
+            <li *ngFor="let msg of messengers"
+                [ngClass]="{'my-message': msg.senderId == userCurrent.id, 'other-message': msg.senderId != userCurrent.id,}"
+                class="message-item-li">
+                <span *ngIf="msg.content!='' && msg.content!=null && msg.messengerType!='icon' "
+                    class="message-item message-content"> {{ msg.content }}</span>
+                <span *ngIf="msg.messengerType=='icon'"><img src="{{baseImageUrl+msg.icon.url}}"></span>
+                <div *ngIf="msg.medias && msg.medias.length > 0" class="w-100" class="image-grid">
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+                        <img *ngIf="media.type=='image'" [src]="baseImageUrl + media.url" class="img-thumbnail"
+                            (click)="openModalRoomImage(baseImageUrl+media.url)" />
+                    </ng-container>
+
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+                        <audio *ngSwitchCase="'audio'" [src]="baseImageUrl + media.url" controls></audio>
+                    </ng-container>
+
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+                        <video *ngSwitchCase="'video'" [src]="baseImageUrl + media.url" controls></video>
+                    </ng-container>
+
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+                        <span *ngSwitchCase="'pdf'" (click)="openModalFDFPreview(media)"
+                            class="d-flex justify-content-end">
+                            <img src="../../../../assets/icons/pdf2.jpg" alt="Word" class="icon-thumbnail" />
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <span>{{ media.name }}</span>
+                                <div>
+                                    <small *ngSwitchCase="'pdf'" (click)="openModalFDFPreview(media)">Xem
+                                        trước</small>
+                                    <a [href]="baseImageUrl + media.url" target="_blank" class="document-link ps-3">
+                                        <i class="fa-solid fa-download icon-preview"></i>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </span>
+                    </ng-container>
+
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+                        <span *ngSwitchCase="'word'" (click)="openModalWORDPreview(media)"
+                            class="d-flex justify-content-end">
+                            <img src="../../../../assets/icons/icons8-word-256.png" alt="Word" class="icon-thumbnail" />
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <span>{{ media.name }}</span>
+                                <div>
+                                    <small *ngSwitchCase="'word'" (click)="openModalWORDPreview(media)">Xem
+                                        trước</small>
+                                    <a [href]="baseImageUrl + media.url" target="_blank" class="document-link ps-3">
+                                        <i class="fa-solid fa-download icon-preview"></i>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </span>
+                    </ng-container>
+
+
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+                        <span *ngSwitchCase="'excel'" class="d-flex justify-content-end">
+                            <img src="../../../../assets/icons/icons8-excel-256.png" alt="Word"
+                                class="icon-thumbnail" />
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <span>{{ media.name }}</span>
+                                <div>
+                                    <small *ngSwitchCase="'excel'">Xem
+                                        trước</small>
+                                    <a [href]="baseImageUrl + media.url" target="_blank" class="document-link ps-3">
+                                        <i class="fa-solid fa-download icon-preview"></i>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </span>
+                    </ng-container>
+
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+
+                        <span *ngSwitchCase="'powerpoint'" class="d-flex justify-content-end">
+                            <img src="../../../../assets/icons/icons8-powerpoint-256.png" alt="Word"
+                                class="icon-thumbnail" />
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <span>{{ media.name }}</span>
+                                <div>
+                                    <small *ngSwitchCase="'powerpoint'">Xem
+                                        trước</small>
+                                    <a [href]="baseImageUrl + media.url" target="_blank" class="document-link ps-3">
+                                        <i class="fa-solid fa-download icon-preview"></i>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </span>
+                    </ng-container>
+
+                    <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
+                        <span *ngSwitchCase="'other'" class="d-flex justify-content-end">
+                            <img src="../../../../assets/icons/icons8-file-256.png" alt="Word"
+                                class="icon-thumbnail" />
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <span>{{ media.name }}</span>
+                                <div>
+                                    <small *ngSwitchCase="'other'">Xem
+                                        trước</small>
+                                    <a [href]="baseImageUrl + media.url" target="_blank" class="document-link ps-3">
+                                        <i class="fa-solid fa-download icon-preview"></i>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </span>
+                    </ng-container>
+
+                </div>
+
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="col-12 px-3" *ngIf="messengers.length==0">
+    <div class="col-md-12 messages-container d-flex align-items-center justify-content-center" #messengersContainer>
+        <small>You have not texted this person yet.</small>
+    </div>
+</div>
+
+<ng-template #ImagePreview let-modal>
+    <div class="modal-body text-center">
+        <img [src]="selectedImage" class="img-fluid" />
+    </div>
+</ng-template>
+
+
+<ng-template #FDFPreview let-modal>
+    <div class="modal-body d-flex flex-column align-items-center modal-login">
+        <div class="modal-body">
+            <pdf-viewer [src]="baseImageUrl+media.url" [render-text]="true" class="preview-pdf"></pdf-viewer>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- <ng-template #WORDPreview let-modal>
+    <div class="modal-body text-center">
+        <div #wordContainer class="word-container">dddddddđ</div>
+    </div>
+</ng-template> -->
+
+<div *ngIf="isShowWORDPreview" class="modal-overlay" (click)="closeModalWORDPreview()">
+    <div class="modal-content-word" (click)="$event.stopPropagation()">
+        <div #wordContainer class="word-container"></div>
+        <div *ngIf="errorMessage!=''" class="alert alert-danger mt-2">
+            {{ errorMessage }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+.main-app {
+    display: flex;
+    max-height: 100vh;
+}
+.main-content {
+    background-color: rgb(237,241,247);
+    height: 100vh;
+
+}
+
+.sidebar {
+    flex-shrink: 0;
+}
+
+.main-content {
+    width: 100%;
+    flex: 1 1;
+}
+
+/* @media (max-width: 1171px) {
+    .main-content {
+        max-width: calc(100% - 160px);
+        padding: 0 50px;
+
+    }
+}
+
+@media (max-width: 992px) {
+    .main-app {
+        display: unset;
+    }
+
+    .main-content {
+        max-width: 100%;
+        padding: 0 20px;
+    }
+} */

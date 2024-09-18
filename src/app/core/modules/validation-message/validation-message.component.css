@@ -1,0 +1,31 @@
+
+
+.z-index{
+    color: red;
+    font-size: 12px !important;
+    margin-bottom: 5px;
+    text-align: left;
+    margin-left: 5px;
+
+
+}
+
+/* .z-index{
+    color: red;
+    position: absolute;
+    z-index: 15;
+    font-size: 12px !important;
+    margin-left: 5px;
+    margin-bottom: 5px;
+} */
+
+
+/* .danger-notice > div{ */
+    /* margin-bottom: 10px !important; */
+/* } */
+
+/* .danger-notice{ */
+    /* margin-top: -8px !important; */
+    /* margin-bottom: 10px !important;
+
+}*/

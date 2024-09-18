@@ -1,0 +1,36 @@
+<div class="overlay" *ngIf="isPopupVisible"></div>
+<div class="popup" *ngIf="isPopupVisible && !isVideo"
+    [ngStyle]="{'background-image': 'url('+baseImageUrl + infoConversation.participantInfos[0].avatarUrl + ')'}">
+    <div class="background-overlay"></div>
+
+    <div class="popup-header">
+        <h5>Gọi Cho {{infoConversation.participantInfos[0].name}}</h5>
+        <button class="close-btn rounded-circle" (click)="closeModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <div class="popup-body">
+        <img src="{{baseImageUrl + infoConversation.participantInfos[0].avatarUrl}}" class="caller-image">
+        <p>Đang đổ chuông...</p>
+    </div>
+    <div class="popup-footer">
+        <button class="btn" [ngClass]="{'btn-danger': isCalling, 'btn-success': !isCalling}" (click)="handleSendRequestCallVideo()">
+            <i class="fa-solid fa-phone icon-call-custom"></i>
+        </button>        
+        <button class="btn btn-secondary" >
+            <img src="assets/icons/icons8-setting-50.png" alt="...">
+        </button>
+    </div>
+</div>
+
+<div class="popup" *ngIf="isPopupVisible && isVideo">
+    <div class="background-overlay"></div>
+
+    <div class="popup-header">
+        <h5>Tny Call - Minh</h5>
+        <button class="close-btn rounded-circle" (click)="closeModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+</div>

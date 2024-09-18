@@ -1,0 +1,140 @@
+.login-box {
+	height: 100%;
+	padding: 30px 200px;
+	overflow: hidden;
+	margin: 0 !important;
+}
+
+
+.name-box p{
+	font-size: 18px;
+    font-weight: 600;
+    color: #3B5998;
+    letter-spacing: 0.1rem;
+    margin-bottom: 10px;
+}
+.box-left {
+	background-color: rgb(40, 92, 196);
+	height: 100%;
+	/* border-radius: 10px; */
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+.box-right {
+	background-color: #FFFFFF;
+	height: 100%;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.text-gray {
+	color: #c2c0c0;
+}
+
+.p-button-primary {
+	width: 100% !important;
+}
+
+.px-10 {
+	padding: 0 20%;
+}
+
+/* 
+
+.custom-label{
+
+	input{
+		width: 100% !important;
+		padding: 10px 5px;
+		border:1px solid  #c2c0c0 !important;
+		border-radius: 5px;
+		outline: none;
+
+	}
+	input:hover{
+		cursor: pointer;
+		border:1px solid  #326fd1 !important;
+	}
+	input:focus{
+		border:1px solid  #326fd1 !important;
+	
+	}
+
+
+} */
+
+
+:host ::ng-deep .p-float-label input {
+	width: 100% !important;
+	padding: 10px 5px;
+	border: 1px solid #c2c0c0 !important;
+	border-radius: 5px;
+	outline: none;
+	margin-bottom: 10px;
+}
+
+:host ::ng-deep input:hover {
+	cursor: pointer;
+	border: 1px solid #326fd1 !important;
+
+}
+
+:host ::ng-deep input:focus {
+	border: 1px solid #326fd1 !important;
+}
+
+:host ::ng-deep input:focus .p-float-label label {
+	color: blue !important;
+	top: -2px !important;
+}
+
+.custom-label-top {
+	margin-left: 5px;
+	margin-bottom: -2px;
+	color: #c2c0c0;
+	font-size: 15px;
+}
+
+
+
+:host ::ng-deep .p-password {
+	width: 100% !important;
+	margin-bottom: 10px;
+}
+
+:host ::ng-deep .p-password input {
+	width: 100% !important;
+
+}
+
+.btn-google {
+	color: #757575;
+	background-color: #ffffff;
+	border: 1px solid #dadce0;
+	font-weight: 500;
+}
+
+.btn-google img {
+	width: 20px;
+	margin-right: 10px;
+}
+
+.btn-google {
+	padding: 15px 15px;
+}
+
+
+.strong-register {
+	color: rgb(40, 92, 196);
+}
+
+.footer-login{
+	position: absolute;
+    bottom: 50px;
+}
+.position-absolute-custom{
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}

@@ -1,0 +1,13 @@
+.p-10{
+    padding: 10%;
+}
+.w-50{
+    width: 40% !important;
+}
+
+.text-color{
+    color: var(--color-text-same-background);
+}
+.d-flex-custom{
+    display: flex;
+}
