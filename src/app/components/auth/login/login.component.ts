@@ -65,10 +65,13 @@ export class LoginComponent {
                         )
                         this.toastrService.success(res.message, "Thành công");
                         this.handlePostLoginRedirect();
+                        this.isLoading=false;
 
                     }
                     else {
                         this.toastrService.error(res.message);
+                        this.isLoading=false;
+
                     }
                 },
                 (exception) => {
@@ -84,6 +87,8 @@ export class LoginComponent {
         else {
             markAllAsTouched(this.loginForm);
             this.toastrService.warn("Cần nhập đủ thông tin", "Cảnh báo");
+            this.isLoading=false;
+            this.isSubmitting = false;
 
 
         }

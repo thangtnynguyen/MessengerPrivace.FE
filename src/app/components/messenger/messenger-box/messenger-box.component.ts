@@ -1,10 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AuthService } from 'src/app/core/services/apis/auth.service';
 import { MessengerService } from 'src/app/core/services/apis/messenger.service';
 import { MessengerHubService } from 'src/app/core/services/signlrs/messenger-hub.service';
 import { environment } from 'src/environments/environment';
 import * as docx from 'docx-preview';
+import { ActivatedRoute } from '@angular/router';
+import { ConversationService } from 'src/app/core/services/apis/conversation.service';
 
 @Component({
 	selector: 'app-messenger-box',
@@ -12,7 +14,7 @@ import * as docx from 'docx-preview';
 	styleUrls: ['./messenger-box.component.css'],
 	encapsulation: ViewEncapsulation.None
 })
-export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges {
+export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
 
 
 	@Input() conversationId!: any;
@@ -27,7 +29,10 @@ export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges {
 		private messengerService: MessengerService,
 		private messengerHubService: MessengerHubService,
 		private authService: AuthService,
-		private changeDetectorRef: ChangeDetectorRef
+		private changeDetectorRef: ChangeDetectorRef,
+		private activatedRoute: ActivatedRoute,
+		private conversationService: ConversationService,
+
 
 	) {
 		this.authService.userCurrent.subscribe((user: any) => {
@@ -58,50 +63,74 @@ export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges {
 
 
 	ngOnInit(): void {
-		if(this.lastSendId!=this.userCurrent.id){
+
+		if (this.lastSendId != this.userCurrent.id && this.lastSendId != null && this.conversationId != null) {
 			const request = {
 				id: this.lastMessengerId,
 				conversationid: this.conversationId,
 				status: 'read',
 			};
 			this.messengerService.updateStatus(request).subscribe();
+			this.scrollToBottom();
+
 		}
-		this.messengerHubService.startConnection().subscribe({
-			next: () => {
-				if (this.conversationId != null) {
-					this.messengerHubService.joinConversationGroup(this.conversationId);
-					this.handleGetMessengers();
-					this.messengerHubService.addMessengerListener((messenger) => {
-						if (this.messengers.length > 20) {
-							// this.messengers.unshift(messenger);
-							// this.messengers.pop();
-							this.messengers.shift(); // Xóa phần tử đầu tiên
-							this.messengers.push(messenger); // Thêm phần tử mới vào cuối mảng
-						}
-						else {
-							// this.messengers.unshift(messenger);
-							this.messengers.push(messenger);
 
-						}
-						this.scrollToBottom();
-
-
-					});
+		if (this.conversationId != null) {
+			this.handleGetMessengers();
+			this.messengerHubService.addMessengerListener((messenger) => {
+				if (this.messengers.length > 20) {
+					// this.messengers.unshift(messenger);
+					// this.messengers.pop();
+					this.messengers.shift(); // Xóa phần tử đầu tiên
+					this.messengers.push(messenger); // Thêm phần tử mới vào cuối mảng
 				}
+				else {
+					// this.messengers.unshift(messenger);
+					this.messengers.push(messenger);
 
-			},
-			error: (err) => console.error('Error starting connection in ngOnInit: ', err)
-		});
+				}
+				this.scrollToBottom();
+
+
+			});
+		}
 	}
 
-
+	private shouldScroll = false;
 	ngOnChanges(changes: SimpleChanges): void {
 		if (changes['conversationId']) {
 			if (this.conversationId != null) {
 				this.handleGetMessengers();
+				// this.scrollToBottom();
 			}
+			this.shouldScroll = true;
+
+		}
+		if (changes['messengers']) {
+			if (this.conversationId != null) {
+				this.handleGetMessengers();
+				this.scrollToBottom();
+			}
+			this.shouldScroll = true;
+
 		}
 	}
+
+
+	ngAfterViewInit() {
+		this.scrollToBottom();
+	}
+
+	ngAfterViewChecked(): void {
+		// this.scrollToBottom();
+		if (this.shouldScroll) {
+			this.scrollToBottom();
+			this.shouldScroll = false;  // Đặt lại cờ sau khi cuộn
+		  }
+
+	}
+
+
 
 	getGoogleDocsViewerUrl(fileUrl: string): string {
 		return `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
@@ -111,17 +140,20 @@ export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges {
 
 	ngOnDestroy() {
 		// this.messengerHubService.leaveConversationGroup(this.conversationId);
+
 	}
 
 	handleGetMessengers() {
 		const request = {
 			conversationId: this.conversationId,
 			pageSize: 100,
-			sortBy:'asc'
+			sortBy: 'asc'
 		};
 		this.messengerService.getByConversation(request).subscribe(res => {
 			if (res.status) {
 				this.messengers = res.data.items;
+				this.shouldScroll = true;
+
 			}
 			else {
 				this.messengers = [];
@@ -162,7 +194,6 @@ export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges {
 				.then(response => {
 					if (!response.ok) {
 						this.errorMessage = 'Có lỗi xảy ra trong quá trình xử lý tài liệu,vui lòng tải tài liệu về để xem lâu dài';
-						// throw new Error(`HTTP error! Status: ${response.status}`);
 						return;
 					}
 					return response.arrayBuffer();
@@ -171,16 +202,13 @@ export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges {
 					try {
 						docx.renderAsync(data, this.wordContainer!.nativeElement)
 							.catch(error => {
-								// console.error('Error rendering document:', error);
 								this.errorMessage = 'Có lỗi xảy ra trong quá trình xử lý tài liệu,vui lòng tải tài liệu về để xem lâu dài';
 							});
 					} catch (error) {
-						// console.error('Error rendering document:', error);
 						this.errorMessage = 'Có lỗi xảy ra trong quá trình xử lý tài liệu,vui lòng tải tài liệu về để xem lâu dài';
 					}
 				})
 				.catch(error => {
-					// console.error('Fetch error:', error);
 					this.errorMessage = 'Không thể tải tài liệu. Vui lòng thử lại sau.';
 				});
 		}
@@ -195,6 +223,7 @@ export class MessengerBoxComponent implements OnInit, OnDestroy, OnChanges {
 	scrollToBottom(): void {
 		try {
 			this.messengersContainer.nativeElement.scrollTop = this.messengersContainer.nativeElement.scrollHeight + 1000;
+			console.log("Đã scroll");
 		} catch (err) {
 			console.error('Error scrolling to bottom:', err);
 		}

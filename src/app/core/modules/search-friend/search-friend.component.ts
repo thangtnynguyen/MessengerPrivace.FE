@@ -3,6 +3,7 @@ import { UserService } from '../../services/apis/user.service';
 import { ConversationService } from '../../services/apis/conversation.service';
 import conversationTypeConstant from '../../constants/conversation-type.constant';
 import { AuthService } from '../../services/apis/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-search-friend',
@@ -22,17 +23,18 @@ export class SearchFriendComponent {
 
 	private searchTimer: any = null;
 
-	public userCurrent:any; 
+	public userCurrent: any;
 
-	private conversationTypeConstant= conversationTypeConstant;
+	private conversationTypeConstant = conversationTypeConstant;
 
 	constructor(
 		private userService: UserService,
-		private authService:AuthService,
-		private conversationService:ConversationService
+		private authService: AuthService,
+		private conversationService: ConversationService,
+		private router: Router
 	) {
-		this.authService.userCurrent.subscribe(user=>{
-			this.userCurrent=user;
+		this.authService.userCurrent.subscribe(user => {
+			this.userCurrent = user;
 		});
 	}
 
@@ -68,20 +70,35 @@ export class SearchFriendComponent {
 		})
 	}
 
-
-	handleCreateConversation(friend:any){
-		const request={
-			type:this.conversationTypeConstant.personal,
-			participants:[this.userCurrent.id,friend.id],
-			administrators:[this.userCurrent.id,friend.id],
+	isCreateConversation = 1;
+	handleCreateConversation(friend: any) {
+		this.isCreateConversation += 1;
+		if (this.isCreateConversation % 2 != 0) {
+			this.router.navigate([], {
+				queryParams: { id: null },
+				queryParamsHandling: 'merge',
+			});
 		}
-		this.conversationService.createOrGet(request).subscribe(res=>{
-			this.dataChatInfoEvent.emit(res.data);
-		});
+		else {
+			const request = {
+				type: this.conversationTypeConstant.personal,
+				participants: [this.userCurrent.id, friend.id],
+				administrators: [this.userCurrent.id, friend.id],
+			}
+			this.conversationService.createOrGet(request).subscribe(res => {
+				this.dataChatInfoEvent.emit(res.data);
+				this.router.navigate([], {
+					queryParams: { id: res.data.id },
+					queryParamsHandling: 'merge',
+				});
+
+			});
+		}
+
 	}
 
-	
-	handleShowMessengerBox(){
+
+	handleShowMessengerBox() {
 		this.eventChange.emit(true);
 	}
 

@@ -1,9 +1,9 @@
 <div class="col-12">
-    <div class="p-3 border-bottom">
+    <div class="p-3 border-bottom" *ngIf="infoConversation!=undefined && infoConversation?.participantInfos!=undefined">
         <div class="d-flex align-items-center">
-            <img src="assets/icons/icons8-rubik-50.png" class="rounded-circle" width="50">
+            <img [src]="baseImageUrl+infoConversation?.participantInfos![0]!?.avatarUrl" class="rounded-circle" width="50">
             <div class="ml-3">
-                <h6 class="m-0">Minh</h6>
+                <h6 class="m-0">{{infoConversation?.participantInfos![0]!?.name}}</h6>
                 <small>Tạo nhóm trò chuyện</small>
             </div>
         </div>
@@ -16,12 +16,10 @@
     <div class="p-3 border-bottom">
         <p><strong>Ảnh/Video</strong></p>
         <div class="d-flex flex-wrap">
-            <!-- Example placeholder for images -->
             <img src="assets/icons/icons8-rubik-50.png" class="img-thumbnail m-1">
             <img src="assets/icons/icons8-rubik-50.png" class="img-thumbnail m-1">
-            <!-- More images... -->
         </div>
-        <a  class="btn btn-link p-0">Xem tất cả</a> <!-- Nút Xem tất cả cho Ảnh/Video -->
+        <a  class="btn btn-link p-0">Xem tất cả</a> 
     </div>
     <div class="p-3">
         <p><strong>File</strong></p>

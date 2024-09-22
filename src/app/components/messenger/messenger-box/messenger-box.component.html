@@ -1,5 +1,5 @@
 <div class="col-12 px-3" *ngIf="messengers.length>0">
-    <button (click)="scrollToBottom()">Thành công</button>
+    <!-- <button (click)="scrollToBottom()">Thành công</button> -->
     <div class="col-md-12 messages-container" #messengersContainer>
         <ul class="list-group">
             <li *ngFor="let msg of messengers"
@@ -19,9 +19,9 @@
                     </ng-container>
 
                     <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
-                        <video *ngSwitchCase="'video'" [src]="baseImageUrl + media.url" controls></video>
-                    </ng-container>
-
+                        <video *ngSwitchCase="'video'" [src]="baseImageUrl + media.url" controls class="custom-video"></video>
+                      </ng-container>
+                      
                     <ng-container *ngFor="let media of msg.medias" [ngSwitch]="media.type">
                         <span *ngSwitchCase="'pdf'" (click)="openModalFDFPreview(media)"
                             class="d-flex justify-content-end">

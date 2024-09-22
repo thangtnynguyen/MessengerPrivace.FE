@@ -1,10 +1,10 @@
-<ng-template #profileModal let-modal="modal">
-	<div class="modal-body">
-		<div class="background-section"></div>
-		<img src="assets/icons/icons8-rubik-50.png" alt="Hoàng Bàn Quyền" class="profile-pic">
+<!-- <ng-template #profileModal let-modal="modal" >
+	<div class="modal-body  send-request">
+		<div class="background-section" [ngStyle]="{'background-image': 'url('+baseImageUrl + infoConversation.participantInfos[0].avatarUrl + ')'}"></div>
+		<img [src]="baseImageUrl+infoConversation.participantInfos[0].avatarUrl" class="profile-pic">
 		<div class="content-section mt-8">
-			<h3>Hoàng Bàn Quyền</h3>
-			<p>Xin chào, mình là Thắng Tný Nguyễn. Kết bạn với mình nhé!</p>
+			<h3>{{infoConversation.participantInfos[0].name}}</h3>
+			<p>Xin chào, mình là {{infoConversation.participantInfos[0].name}}. Kết bạn với mình nhé!</p>
 			<textarea class="form-control" maxlength="150">...........</textarea>
 			<div class="form-check">
 				<input class="form-check-input" type="checkbox" id="blockCheckbox">
@@ -18,4 +18,55 @@
 		<button type="button" class="btn btn-secondary" (click)="closeModal()">Thông tin</button>
 		<button type="button" class="btn btn-primary" (click)="closeModal()">Kết bạn</button>
 	</div>
-</ng-template>
+</ng-template> -->
+
+<!-- <div *ngIf="isModalOpen" class="overlay" (click)="closeModal()"></div>
+<div *ngIf="isModalOpen" class="modal-dialog send">
+  <div class="send modal-content">
+    <div class="modal-body send-request">
+      <div class="background-section" [ngStyle]="{'background-image': 'url('+baseImageUrl + infoConversation.participantInfos[0].avatarUrl + ')'}"></div>
+      <img [src]="baseImageUrl + infoConversation.participantInfos[0].avatarUrl" class="profile-pic">
+      <div class="content-section mt-8">
+        <h3>{{ infoConversation.participantInfos[0].name }}</h3>
+        <p>Xin chào, mình là {{ infoConversation.participantInfos[0].name }}. Kết bạn với mình nhé!</p>
+        <textarea class="form-control" maxlength="150">...........</textarea>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="blockCheckbox">
+          <label class="form-check-label" for="blockCheckbox">
+            Chặn người này xem nhật ký của tôi
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeModal()">Thông tin</button>
+      <button type="button" class="btn btn-primary" (click)="closeModal()">Kết bạn</button>
+    </div>
+  </div>
+</div> -->
+
+<div *ngIf="isModalOpen" class="overlay" (click)="closeModal()"></div>
+<div *ngIf="isModalOpen" class="modal-dialog send-request">
+	<div  class="modal-content" *ngIf="infoConversation!=undefined && infoConversation?.participantInfos!=undefined">
+	  <div class="modal-body send-request">
+		<div class="background-section" [ngStyle]="{'background-image': 'url('+baseImageUrl + infoConversation.participantInfos[0].avatarUrl + ')'}"></div>
+		<div class="profile-and-name" >
+		  <img [src]="baseImageUrl+infoConversation.participantInfos[0].avatarUrl" class="profile-pic">
+		  <h3>{{ infoConversation.participantInfos[0].name }}</h3>
+		</div>
+		<div class="content-section mt-8">
+		  <p>Xin chào, mình là {{ infoConversation.participantInfos[0].name }}. Kết bạn với mình nhé!</p>
+		  <textarea class="form-control" maxlength="150">...........</textarea>
+		  <div class="form-check">
+			<input class="form-check-input" type="checkbox" id="blockCheckbox">
+			<label class="form-check-label" for="blockCheckbox">
+			  Chặn người này xem nhật ký của tôi
+			</label>
+		  </div>
+		</div>
+	  </div>
+	  <button class="fancy-button">Kết bạn</button>
+
+	</div>
+  </div>
+  

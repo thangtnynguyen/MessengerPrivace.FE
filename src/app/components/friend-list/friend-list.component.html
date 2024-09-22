@@ -1,42 +1,104 @@
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3">
-            <div class="list-group">
-                <div class="list-group-item list-group-item-action active">Danh sách bạn bè</div>
-                <div class="list-group-item list-group-item-action">Danh sách nhóm và cộng đồng</div>
-                <div class="list-group-item list-group-item-action">Lời mời kết bạn</div>
-                <div class="list-group-item list-group-item-action">Lời mời vào nhóm và cộng đồng</div>
+<div class="row friend-list-container">
+    <div class="col-xxl-3 col-lg-4 col-md-1  col-2  sidebar-vertical    d-flex p-0">
+        <div class="col-lg-2 col-md-12 col-12  sidebar">
+            <div class="avatar-icon">
+                <img [src]="baseImageUrl + userCurrent.avatarUrl" class="rounded-circle" />
+                <span class="badge bg-danger">5+</span>
+            </div>
+            <div class="nav-icon active"><i class="fas fa-comments"></i></div>
+            <div class="nav-icon"><i class="fas fa-user"></i></div>
+            <div class="nav-icon"><i class="fas fa-envelope"></i></div>
+            <div class="nav-icon"><i class="fas fa-clipboard-list"></i></div>
+            <div class="nav-icon"><i class="fas fa-cog"></i></div>
+        </div>
+
+        <div class="col-lg-10 col-md-10 col-12 sidebar-search p-0">
+            <div class="p-3 border-bottom d-flex">
+                <input type="text" class="form-control" [(ngModel)]="keyWord" placeholder="Tìm kiếm"
+                    (focus)="onFocus()">
+                <button *ngIf="isSearch==true" class="btn btn-primary-custom" (click)="isSearch = false">Đóng</button>
+            </div>
+            <ul *ngIf="!isSearch" class="nav flex-column p-2">
+                <li class="nav-item">
+                    <a class="nav-link active">
+                        <i class="fas fa-user"></i> Danh sách bạn bè
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <i class="fas fa-users"></i> Danh sách nhóm và cộng đồng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <i class="fas fa-user-plus"></i> Lời mời kết bạn
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <i class="fas fa-users-cog"></i> Lời mời vào nhóm và cộng đồng
+                    </a>
+                </li>
+            </ul>
+
+            <app-search-friend (dataChatInfoEvent)="handleReceiveDataChatInfo($event)"
+                (eventChange)="handleChangeMessengerBox()" *ngIf="isSearch" [keyWord]="keyWord"></app-search-friend>
+        </div>
+
+    </div>
+
+
+    <!-- Main content area -->
+    <div class="col-lg-9 col-md-7 col-sm-12 content">
+        <div class="header d-flex justify-content-between align-items-center">
+            <h5>Danh sách bạn bè</h5>
+            <div class="controls d-flex gap-2">
+                <input type="text" placeholder="Tìm bạn" class="form-control find-friend-input" />
+                <select class="form-select" aria-label="Sort friends">
+                    <option selected>Tên (A-Z)</option>
+                    <option value="1">Tên (Z-A)</option>
+                </select>
+                <select class="form-select" aria-label="Filter friends">
+                    <option selected>Tất cả</option>
+                    <option value="1">Bạn thân</option>
+                    <option value="2">Đồng nghiệp</option>
+                </select>
             </div>
         </div>
 
-        <!-- Friend list -->
-        <div class="col-md-9">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Tìm kiếm" aria-label="Recipient's username"
-                    aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button">Tìm</button>
-                </div>
+        <div class="friend-list">
+            <!-- Friend group A -->
+            <div class="friend-group">
+                <div class="friend-group-title">A</div>
+                <ul class="list-unstyled">
+                    <li class="friend-item d-flex align-items-center">
+                        <img src="assets/icons/icons8-rubik-50.png" alt="avatar" class="avatar" />
+                        <span class="friend-name">A Cường</span>
+                    </li>
+                    <li class="friend-item d-flex align-items-center">
+                        <img src="assets/icons/icons8-rubik-50.png" alt="avatar" class="avatar" />
+                        <span class="friend-name">A Nguyễn 2</span>
+                    </li>
+                    <!-- Add more friends here -->
+                </ul>
             </div>
-            <div class="friend-list">
-                <div class="mb-2">
-                    <h5 class="border-bottom pb-2">A</h5>
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-action">A Cường</div>
-                        <div class="list-group-item list-group-item-action">A Rùa</div>
-                        <div class="list-group-item list-group-item-action">Anh Dũng</div>
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <h5 class="border-bottom pb-2">B</h5>
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-action">B Chung</div>
-                        <!-- More friends -->
-                    </div>
-                </div>
-                <!-- More sections -->
+
+            <!-- Friend group B -->
+            <div class="friend-group">
+                <div class="friend-group-title">B</div>
+                <ul class="list-unstyled">
+                    <li class="friend-item d-flex align-items-center">
+                        <img src="assets/icons/icons8-rubik-50.png" alt="avatar" class="avatar" />
+                        <span class="friend-name">B Chung</span>
+                    </li>
+                    <li class="friend-item d-flex align-items-center">
+                        <img src="assets/icons/icons8-rubik-50.png" alt="avatar" class="avatar" />
+                        <span class="friend-name">Bùi Thị Bảo Anh</span>
+                    </li>
+                    <!-- Add more friends here -->
+                </ul>
             </div>
+            <!-- Add more friend groups here -->
         </div>
     </div>
 </div>

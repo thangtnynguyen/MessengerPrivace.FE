@@ -57,8 +57,8 @@ export class AuthService {
 		return this.httpClient.get<ApiResult<UserCurrent>>('/user/user-info', { headers });
 	}
 
-	register(request: any): Observable<any> {
-		return this.httpClient.post('/auth/register', request);
+	register(request: FormData): Observable<any> {
+		return this.httpLoadingService.postFormData('auth/register', request);
 	}
 
 	loginByEmail(request: LoginRequest, password?: any): Observable<ApiResult<AuthToken>> {

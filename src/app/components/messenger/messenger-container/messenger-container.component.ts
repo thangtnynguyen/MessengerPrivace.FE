@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CallModalComponent } from '../call-modal/call-modal.component';
 import { SendInvitationModalComponent } from '../send-invitation-modal/send-invitation-modal.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -15,13 +15,17 @@ import { CallVideoHubService } from 'src/app/core/services/signlrs/call-video/ca
 import { CallSessionHubService } from 'src/app/core/services/signlrs/call-video/call-session-hub.service';
 import { CallSessionService } from 'src/app/core/services/apis/call-session.service';
 import { Router } from '@angular/router';
+import { Page } from 'src/app/core/enums/page.enum';
+import { ActivatedRoute } from '@angular/router';
+import { map, Observable } from 'rxjs';
+import { MessengerBoxComponent } from '../messenger-box/messenger-box.component';
 
 @Component({
 	selector: 'app-messenger-container',
 	templateUrl: './messenger-container.component.html',
 	styleUrls: ['./messenger-container.component.css']
 })
-export class MessengerContainerComponent implements OnInit, OnDestroy {
+export class MessengerContainerComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	public userCurrent: any = null;
 	public baseImageUrl = environment.baseApiImageUrl;
@@ -49,9 +53,10 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 		private iconService: IconService,
 		private messengerHubService: MessengerHubService,
 		private callVideoHubService: CallVideoHubService,
-		private callSessionHubService:CallSessionHubService,
-		private callSessionService:CallSessionService,
-		private router :Router
+		private callSessionHubService: CallSessionHubService,
+		private callSessionService: CallSessionService,
+		private router: Router,
+		private activatedRoute: ActivatedRoute
 
 	) {
 		this.authService.userCurrent.subscribe(user => {
@@ -68,6 +73,7 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 
 	@ViewChild(CallModalComponent) callModalComponent!: CallModalComponent;
 	@ViewChild(SendInvitationModalComponent) sendInvitationModalComponent!: SendInvitationModalComponent;
+	@ViewChild(MessengerBoxComponent) messengerBoxComponent!: MessengerBoxComponent;
 	@ViewChild('fileInput') fileInput!: ElementRef;
 	@ViewChild('imageInput') imageInput!: ElementRef;
 	@ViewChild('messengersContainer') private messengersContainer!: ElementRef;
@@ -76,68 +82,89 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 	private isDoneJoinConversation: number = 0;
 	ngOnInit() {
 		document.addEventListener('paste', this.handlePaste.bind(this));
-		this.handleGetConversations();
-
-		this.messengerHubService.startConnection().subscribe({
-			next: () => {
-				if (this.conversations != null && this.conversations.length > 0) {
-					this.conversations.forEach((conversation: any) => {
-						this.messengerHubService.joinConversationGroup(conversation.id);
-						this.isDoneJoinConversation += 1;
-					});
-					this.messengerHubService.addMessengerUpdateStatusListener((status) => {
-						if (status == true) {
-							this.handleGetConversations();
-						}
-					});
-					this.messengerHubService.addMessengerListener((messenger) => {
-						if (messenger != null) {
-							this.handleGetConversations();
-						}
-					});
-				}
-
-			},
-			error: (err) => console.error('Error starting connection in ngOnInit: ', err)
+		// this.handleGetConversations();
+		this.activatedRoute.queryParams.subscribe(params => {
+			const conversationId = params['id'];
+			if (conversationId) {
+				console.log('Conversation ID:', conversationId);
+				this.conversationService.getById({ id: conversationId }).subscribe(res => {
+					if (res.status == true) {
+						this.infoConversation = res.data;
+					}
+				})
+			}
 		});
 
-		this.callVideoHubService.startConnection().subscribe({
-			next: () => {
-				if (this.conversations != null && this.conversations.length > 0) {
-					this.conversations.forEach((conversation: any) => {
-						this.callVideoHubService.joinCallVideoGroup(conversation.id);
-						this.isDoneJoinConversation += 1;
-					});
-					this.callVideoHubService.addCallVideoRequestListener((callSession) => {
-						if (callSession != null) {
-							if (callSession.callerId != this.userCurrent.id) {
-								this.isCallRequest = true;
-								this.infoCallSession=callSession;
-								console.log("Anh đến rồi");
-								console.log(callSession);
-							}
-							else{
-								this.infoCallSession=callSession;
-							}
+		this.handleGetConversations().subscribe({
+			next: (conversations) => {
+				this.conversations = conversations;
+				this.messengerHubService.startConnection().subscribe({
+					next: () => {
+						if (this.conversations && this.conversations.length > 0) {
+							this.conversations.forEach((conversation: any) => {
+								this.messengerHubService.joinConversationGroup(conversation.id);
+							});
+
+							this.messengerHubService.addMessengerUpdateStatusListener((status) => {
+								if (status) {
+									this.handleGetConversations().subscribe({
+										next: (newConversations) => this.conversations = newConversations
+									});
+								}
+							});
+
+							this.messengerHubService.addMessengerListener((messenger) => {
+								if (messenger) {
+									this.handleGetConversations().subscribe({
+										next: (newConversations) => this.conversations = newConversations
+									});
+								}
+							});
 						}
-					});
-					this.callVideoHubService.addAcceptCallVideoRequestListener((callSession) => {
-						console.log("info" + this.infoCallSession);
-						if (callSession != null) {
-							console.log("call section này cùi" + callSession.userCallVideos[0]);
-							if (callSession.userCallVideos.length > 1) {
-								console.log("Ông chủ đến đây"+this.infoCallSession.id);
-								this.router.navigate(['/call-video/call', this.infoCallSession.id]);
-							}
+					},
+					error: (err) => console.error('Error starting connection in ngOnInit: ', err)
+				});
+
+				this.callVideoHubService.startConnection().subscribe({
+					next: () => {
+						if (this.conversations != null && this.conversations.length > 0) {
+							this.conversations.forEach((conversation: any) => {
+								this.callVideoHubService.joinCallVideoGroup(conversation.id);
+								this.isDoneJoinConversation += 1;
+							});
+							this.callVideoHubService.addCallVideoRequestListener((callSession) => {
+								if (callSession != null) {
+									if (callSession.callerId != this.userCurrent.id) {
+										this.isCallRequest = true;
+										this.infoCallSession = callSession;
+										console.log("Anh đến rồi");
+										console.log(callSession);
+									}
+									else {
+										this.infoCallSession = callSession;
+									}
+								}
+							});
+							this.callVideoHubService.addAcceptCallVideoRequestListener((callSession) => {
+								console.log("info" + this.infoCallSession);
+								if (callSession != null) {
+									console.log("call section này cùi" + callSession.userCallVideos[0]);
+									if (callSession.userCallVideos.length > 1) {
+										console.log("Ông chủ đến đây" + this.infoCallSession.id);
+										this.router.navigate(['/call-video/call', this.infoCallSession.id]);
+									}
+								}
+							});
 						}
-					});
-				}
+
+					},
+					error: (err) => console.error('Error starting connection in ngOnInit: ', err)
+				});
 
 			},
-			error: (err) => console.error('Error starting connection in ngOnInit: ', err)
+			error: (err) => console.error('Error fetching conversations: ', err)
 		});
 
-	
 	}
 
 	ngOnDestroy() {
@@ -151,8 +178,25 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 
 	}
 
+	handleGetConversations(): Observable<any> {
+		const request = {
+			pageIndex: DEFAULT_PAGE_INDEX,
+			pageSize: DEFAULT_PAGE_SIZE,
+		};
 
-	handleGetConversations() {
+		return this.conversationService.getByUser(request).pipe(
+			map(res => {
+				if (res.status && res.data != null) {
+					return res.data.items;
+				} else {
+					return [];
+				}
+			})
+		);
+	}
+
+
+	handleGetConversationsNoObservable() {
 		const request = {
 			pageIndex: DEFAULT_PAGE_INDEX,
 			pageSize: DEFAULT_PAGE_SIZE,
@@ -164,7 +208,6 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 			}
 		})
 
-		console.log('đã làm mới');
 	}
 
 	handleSendInvite() {
@@ -192,6 +235,7 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 
 	handleReceiveDataChatInfo(data: any) {
 		this.infoConversation = data;
+
 	}
 
 	handleChangeFriendChat() {
@@ -203,6 +247,7 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 
 	handleSendMessenger() {
 		if (this.messenger.content.trim() == '' && this.messenger.medias.length <= 0) {
+			console.log("No content to send");
 			return;
 		}
 		else {
@@ -230,6 +275,8 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 					this.messenger.images = [];
 					this.messenger.files = [];
 					this.messenger.medias = [];
+					this.messengerBoxComponent.scrollToBottom();
+
 				}
 			});
 		}
@@ -252,15 +299,15 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 		// 	error: (err) => console.error('Error starting connection in ngOnInit: ', err)
 		// });
 		this.isCallRequest = false;
-		const request={
-			conversationId:this.infoCallSession.conversationId,
-			callSessionId:this.infoCallSession.id,
-			muteCamera:false,
-			muteMicro:false,
-			status:'online'
+		const request = {
+			conversationId: this.infoCallSession.conversationId,
+			callSessionId: this.infoCallSession.id,
+			muteCamera: false,
+			muteMicro: false,
+			status: 'online'
 		};
-		this.callSessionService.addUser(request).subscribe(res=>{
-			if(res.status==true){
+		this.callSessionService.addUser(request).subscribe(res => {
+			if (res.status == true) {
 				this.router.navigate(['/call-video/call', this.infoCallSession.id]);
 			}
 		});
@@ -376,6 +423,8 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 				if (items[i].type.indexOf('image') !== -1) {
 					const file = items[i].getAsFile();
 					if (file) {
+						const fileType = this.getFileType(file);
+						this.messenger.medias.push({ file: file, type: fileType, name: file.name });
 						const reader = new FileReader();
 						reader.onload = (e: any) => {
 							this.messenger.images.push(e.target.result);
@@ -447,10 +496,33 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 				this.messenger.files = [];
 				this.messenger.medias = [];
 				this.isShowIcons = false;
+				this.messengerBoxComponent.scrollToBottom();
+
 
 			}
 		});
 
+	}
+
+
+	showDropdownUserCurrentInfo = false;
+
+
+	toggleDropdownUserCurrentInfo() {
+		this.showDropdownUserCurrentInfo = !this.showDropdownUserCurrentInfo;
+	}
+
+	sfdf() {
+		console.log(1);
+	}
+
+	handleLogOut() {
+		this.authService.logout().subscribe((res) => {
+			if (res.status == true) {
+				this.authService.setAuthTokenLocalStorage(null);
+				this.router.navigate([Page.Login]);
+			}
+		});
 	}
 
 	convertTimeToRelative(time: Date): string {
@@ -492,7 +564,20 @@ export class MessengerContainerComponent implements OnInit, OnDestroy {
 	}
 
 
+	@ViewChild('chatMessages', { static: false }) chatMessages!: ElementRef;
 
+	// scrollToBottomMessenger(): void {
+	//   try {
+	// 	this.chatMessages.nativeElement.scrollTop = this.chatMessages.nativeElement.scrollHeight;
+	// 	console.log("hihi");
+	//   } catch (err) {
+	// 	console.error('Error scrolling to bottom:', err);
+	//   }
+	// }
+
+	ngAfterViewInit() {
+		//   this.scrollToBottomMessenger();
+	}
 
 
 }

@@ -15,6 +15,10 @@ export class ConversationService {
         return this.http.get('conversation/get-by-user', request);
     }
 
+    getById(request: any = null): Observable<any> {
+        return this.http.get('conversation/get-by-id', request);
+    }
+
     createOrGet(request: any ): Observable<any> {
         return this.http.post('conversation/create-or-get', request);
     }

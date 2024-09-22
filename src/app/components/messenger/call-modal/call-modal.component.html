@@ -1,7 +1,7 @@
 <div class="overlay" *ngIf="isPopupVisible"></div>
 <div class="popup" *ngIf="isPopupVisible && !isVideo"
     [ngStyle]="{'background-image': 'url('+baseImageUrl + infoConversation.participantInfos[0].avatarUrl + ')'}">
-    <div class="background-overlay"></div>
+    <!-- <div class="background-overlay"></div> -->
 
     <div class="popup-header">
         <h5>Gọi Cho {{infoConversation.participantInfos[0].name}}</h5>

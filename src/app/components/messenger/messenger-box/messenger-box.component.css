@@ -4,6 +4,11 @@
 
 }
 
+.list-group{
+  padding-bottom: 50px;
+}
+
+
 .messages-container::-webkit-scrollbar {
   display: none;
 }
@@ -213,16 +218,20 @@
 
 
 .text-end{
-
-  /* margin-right: -60px; */
   margin-right: auto;
 }
 
 .flex-row-reverse {
-  direction: rtl; /* Chỉ định hướng từ phải sang trái */
+  direction: rtl; 
   text-align: left; 
 }
 
+.custom-video {
+  width: 300px;
+  height: calc(300px * 9 / 16);
+  object-fit: cover;
+  border-radius: 5px; 
+}
 
 
 

@@ -14,14 +14,14 @@ export class MessengerHubService {
 
     constructor(private authService: AuthService) {
         this.authToken = this.authService.getAuthTokenLocalStorage()?.accessToken;
-        if (this.authToken) {
-            this.startConnection().subscribe({
-                next: () => console.log('Connection started'),
-                error: (err) => console.error('Error while starting connection: ', err)
-            });
-        } else {
-            console.error('No auth token available. Please login again.');
-        }
+        // if (this.authToken) {
+        //     this.startConnection().subscribe({
+        //         next: () => console.log('Connection started'),
+        //         error: (err) => console.error('Error while starting connection: ', err)
+        //     });
+        // } else {
+        //     console.error('No auth token available. Please login again.');
+        // }
     }
 
     public startConnection(): Observable<void> {
@@ -50,13 +50,13 @@ export class MessengerHubService {
 
     public joinConversationGroup(conversationId: string): void {
         this.hubConnection.invoke('JoinConversationGroup', conversationId)
-            .then(() => console.log(`Invoked join for group: ${conversationId}`))
+            .then(() => console.log(`Invoked join conversation group: ${conversationId}`))
             .catch(err => console.error('Error joining conversation group: ', err));
     }
 
     public leaveConversationGroup(conversationId: string): void {
         this.hubConnection.invoke('LeaveConversationGroup', conversationId)
-            .then(() => console.log(`Invoked leave for group: ${conversationId}`))
+            .then(() => console.log(`Invoked leave conversation group: ${conversationId}`))
             .catch(err => console.error('Error leaving conversation group: ', err));
     }
 

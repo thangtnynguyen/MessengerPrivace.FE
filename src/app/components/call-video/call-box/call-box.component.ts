@@ -76,7 +76,9 @@ export class CallBoxComponent implements OnInit, OnDestroy {
 
 	callSessionId!: any;
 	myPeer: any;
-	ngOnInit(): void {
+	async  ngOnInit() {
+
+		await this.createLocalStream();
 
 		this.isMeeting = true
 		this.isRecorded = this.configService.isRecorded;//enable or disable recorded
@@ -87,25 +89,6 @@ export class CallBoxComponent implements OnInit, OnDestroy {
 
 		this.khoiTaoForm();
 		this.callSessionId = this.route.snapshot.paramMap.get('id') != null ? this.route.snapshot.paramMap.get('id') : '';
-		this.createLocalStream();
-		// this.callVideoHub.startConnection().subscribe({
-		// 	next: () => {
-		// 		if (this.conversationId != null) {
-		// 			this.callVideoHub.joinCallVideoGroup(this.conversationId);
-		// 			this.callVideoHub.addUserOnlineInGroupListener((user) => {
-		// 				console.log(user.name + " JOIN");
-		// 			});
-		// 			this.callVideoHub.addUserOfflineOutGroupListener((user) => {
-		// 				console.log(user.name + " LEARVE");
-		// 				this.videos = this.videos.filter((video) => video.user.id != user.id);
-		// 				this.tempvideos = this.tempvideos.filter(video => video.user.id != user.id);
-		// 			});
-
-		// 		}
-
-		// 	},
-		// 	error: (err) => console.error('Error starting connection in ngOnInit: ', err)
-		// });
 		this.callSessionHubService.startConnection().subscribe({
 			next: () => {
 				if (this.callSessionId != null) {
@@ -143,7 +126,7 @@ export class CallBoxComponent implements OnInit, OnDestroy {
 		});
 
 		this.myPeer.on('open', (userId: any) => {
-			console.log(userId);
+			console.log("kết nối tới peer thành công !" + userId);
 		});
 
 		this.myPeer.on('error', (err: any) => {
@@ -190,11 +173,34 @@ export class CallBoxComponent implements OnInit, OnDestroy {
 		this.subscriptions.add(
 			this.callSessionHubService.oneOnlineUser$.subscribe(member => {
 				if (this.currentUser.id != member.id) {
+					if (!member.id) {
+						console.error('member.id không hợp lệ:', member.id);
+						return;
+					}
+					// console.log('member.id không hợp lệ:', member.id)
+
 					// Let some time for new peers to be able to answer
 					setTimeout(() => {
+						if (!this.myPeer || this.myPeer.disconnected) {
+							console.error('Peer chưa kết nối hoặc đã ngắt kết nối');
+							return;
+						}
+						if (!this.stream) {
+							console.error('Stream chưa được khởi tạo');
+							// return;
+							this.createLocalStream();
+
+						}
 						const call = this.myPeer.call(member.id, this.stream, {
 							metadata: { user: this.currentMember },
 						});
+
+						// Kiểm tra nếu call là undefined
+						if (!call) {
+							console.error("Không thể thực hiện cuộc gọi tới member.id:", member.id);
+							return;
+						}
+						// console.log(call);
 						call.on('stream', (otherUserVideoStream: MediaStream) => {
 							this.addOtherUserVideo(member, otherUserVideoStream);
 							console.log("Chuẩn rồi nhé" + member);
@@ -209,6 +215,7 @@ export class CallBoxComponent implements OnInit, OnDestroy {
 				}
 			})
 		);
+		
 
 		this.subscriptions.add(this.callVideoHub.oneOfflineUser$.subscribe(member => {
 			this.videos = this.videos.filter(video => video.user.id !== member.id);
@@ -406,8 +413,8 @@ export class CallBoxComponent implements OnInit, OnDestroy {
 		this.isMeeting = false;
 		this.myPeer.disconnect();//dong ket noi nhung van giu nguyen cac ket noi khac
 		this.shareScreenPeer.destroy();//dong tat ca cac ket noi
-		this.callVideoHub.stopHubConnection();
 		this.callVideoHub.leaveCallVideoGroup(this.callSessionId);
+		this.callVideoHub.stopHubConnection();
 		this.subscriptions.unsubscribe();
 		localStorage.removeItem('share-screen');
 	}
@@ -429,9 +436,9 @@ export class CallBoxComponent implements OnInit, OnDestroy {
 
 	isOwnVideoZoomed = false;
 
-    toggleOwnVideoZoom() {
-        this.isOwnVideoZoomed = !this.isOwnVideoZoomed;
-    }
+	toggleOwnVideoZoom() {
+		this.isOwnVideoZoomed = !this.isOwnVideoZoomed;
+	}
 
-	
+
 }

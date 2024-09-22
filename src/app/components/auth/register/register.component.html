@@ -1,1 +1,59 @@
-<p>register works!</p>
+<div class="row login-box">
+
+	<div class="col-md-6 col-lg-6 col-6 box-left position-relative">
+		<img src="../../../../assets/banners/login/banner-img.png" alt="">
+		<img src="../../../../assets/banners/login/object-bycicle.png" alt="">
+		<img src="../../../../assets/banners/login/object-moto-bike.png" alt="">
+		<div class="position-absolute-custom">
+			<img src="../../../../assets/banners/login/plain.png" alt="">
+		</div>
+
+	</div>
+
+	<div class="col-md-6 col-lg-6 col-6 box-right   d-flex align-items-center  justify-content-center flex-column  ">
+
+		<div class="rounder-box mb-2">
+			<img src="assets/icons/icons8-rubik-64.png" alt="...">
+		</div>
+		<div class="name-box">
+			<p>TNY MESSENGER TNY</p>
+		</div>
+		<div class="text-box mb-5 d-flex flex-column align-items-center">
+			<small class="text-gray">Một ứng dụng nhắn tin vô cùng tiên lợi dành cho bạn</small>
+			<small class="text-gray">Dùng ngay hôm nay</small>
+		</div>
+		<form (submit)="handleOnSubmitRegister()" class="form-group row w-100 px-10">
+			<label *ngIf="value.length>0" for="username" class="custom-label-top">Email</label>
+			<p-floatLabel class="custom-label">
+				<input id="username" [(ngModel)]="account.email" name="email" type="text" placeholder="Email"  pInputText />
+			</p-floatLabel>
+
+            <label *ngIf="value.length>0" for="name" class="custom-label-top">Email</label>
+			<p-floatLabel class="custom-label">
+				<input id="name" [(ngModel)]="account.name" name="name" type="text" placeholder="Name"  pInputText />
+			</p-floatLabel>
+
+            <label *ngIf="value.length>0" for="phoneNumber" class="custom-label-top">Email</label>
+			<p-floatLabel class="custom-label">
+				<input id="v" [(ngModel)]="account.phoneNumber" name="phoneNumber" type="text" placeholder="Phone Number"  pInputText />
+			</p-floatLabel>
+            
+			<p-password [(ngModel)]="account.password" name="password" [toggleMask]="true" />
+
+			<button pButton pRipple label="Register" class="p-button-primary" type="submit">
+			</button>
+
+			<button class="btn btn-light btn-google mt-4 ">
+				<img src="assets/icons/icons8-google-48.png" alt="Google sign-in">
+				Sign in with Google
+			</button>
+
+		</form>
+		<div class="footer-login">
+			<!-- <small>Don't have an account yet? <span><strong class="strong-register">Register</strong></span></small> -->
+		</div>
+	</div>
+
+</div>
+
+<app-loading-spinner [isLoading]="isLoading"></app-loading-spinner>

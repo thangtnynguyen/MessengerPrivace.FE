@@ -25,7 +25,6 @@ export class CallModalComponent implements OnInit, OnChanges {
 
 
 	ngOnInit() {
-		console.log('CallModalComponent ngOnInit called');
 
 		// this.callSessionHubService.startConnection().subscribe({
 		// 	next: () => {

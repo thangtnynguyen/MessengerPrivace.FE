@@ -3,9 +3,30 @@
 
         <div class="col-xxl-3 col-lg-4 col-md-1  col-2  sidebar-vertical    d-flex">
             <div class="col-lg-2 col-md-12 col-12  sidebar    ">
-                <div class="avatar-icon">
-                    <img src="assets/icons/icons8-rubik-50.png" class="rounded-circle">
+                <div class="avatar-icon position-relative" (click)="toggleDropdownUserCurrentInfo()">
+                    <img [src]="baseImageUrl+userCurrent.avatarUrl" class="rounded-circle">
                     <span class="badge bg-danger">5+</span>
+
+                    <div  class="layout-topbar-menu position-absolute top-0 left-130"  *ngIf="showDropdownUserCurrentInfo">
+                        <div class="box-user" *ngIf="userCurrent != null">
+                            <div class="user-info"  #userInfo>
+                                <span>{{ userCurrent?.name }}</span>
+                                <span class="avatar">
+                                    <img [src]="baseImageUrl + userCurrent.avatarUrl" />
+                                </span>
+                            </div>
+                            <div class="dropdown-user-info">
+                                <ul class="user-info-list">
+                                    <li class="user-info-item">Xem thông tin</li>
+                                    <li class="user-info-item" (click)="handleLogOut()">
+                                        Đăng xuất
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div class="nav-icon active"><i class="fas fa-comments"></i></div>
                 <div class="nav-icon"><i class="fas fa-user"></i></div>
@@ -17,7 +38,7 @@
             <!-- Chat List -->
             <div class="col-lg-10 col-md-10 col-10  bg-light  d-none d-lg-block ">
                 <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="m-0">{{userCurrent.userName}}</h6>
+                    <h6 class="m-0">{{userCurrent.name}}</h6>
                     <div>
                         <i class="fas fa-user-friends mx-2"></i>
                         <i class="fas fa-cog mx-2"></i>
@@ -39,7 +60,7 @@
                     <div class="text-muted">Phân loại</div>
                     <i class="fas fa-ellipsis-h text-muted"></i>
                 </div>
-                <div *ngIf="!isSearch" class="chat-list">
+                <div *ngIf="!isSearch && conversations!=null && conversations.length>0" class="chat-list">
                     <div *ngFor="let conversation of conversations"
                         class="d-flex align-items-center p-3 border-bottom text-dark"
                         (click)="handleChangeMessengerBox(conversation)">
@@ -72,6 +93,7 @@
                                     <img *ngSwitchCase="'audio'" src="assets/icons/icons8-audio-48.png" alt="icon"
                                         class="image-last-messenger">
                                     <span *ngSwitchCase="'image'" class="fs-12">Đã gửi một ảnh</span>
+                                    <span *ngSwitchCase="'video'" class="fs-12">Đã gửi một video</span>
                                     <span *ngSwitchCase="'audio'" class="fs-12">Đã gửi một âm thanh</span>
                                     <span *ngSwitchCase="'pdf'" class="fs-12">Đã gửi một file</span>
                                     <span *ngSwitchCase="'word'" class="fs-12">Đã gửi một file</span>
@@ -92,7 +114,7 @@
         <div *ngIf="!isMessengerBoxBlank" class="col-xxl-7 col-lg-8 col-md-12 col-12  d-flex flex-column">
             <div class="chat-header p-3 d-flex align-items-center text-white rounded">
                 <img src="assets/icons/icons8-rubik-50.png" class="rounded-circle" width="40">
-                <h5>Chat with {{infoConversation?.name}}</h5>
+                <h5>Chat with {{infoConversation.participantInfos[0].name}}</h5>
                 <div class="icon-call">
                     <i class="fa-solid fa-person-circle-plus me-2"
                         (click)="sendInvitationModalComponent.openModal()"></i>
@@ -111,18 +133,18 @@
                         ...
                     </button>
                     <ul class="dropdown-menu-custom" *ngIf="isDropdownVisible">
-                        <li><a class="dropdown-item" href="#">Action 1</a></li>
-                        <li><a class="dropdown-item" href="#">Action 2</a></li>
-                        <li><a class="dropdown-item" href="#">Action 3</a></li>
+                        <li><a class="dropdown-item">Chặn</a></li>
+                        <li><a class="dropdown-item">Báo xấu</a></li>
+                        <li><a class="dropdown-item">Trêu</a></li>
                     </ul>
                 </div>
             </div>
 
 
-            <div class="chat-messages ">
+            <div class="chat-messages" *ngIf="infoConversation!=undefined">
                 <app-messenger-box [conversationId]="infoConversation?.id"
-                    [lastMessengerId]="infoConversation.messenger.id"
-                    [lastSendId]="infoConversation.messenger.senderId"></app-messenger-box>
+                    [lastMessengerId]="infoConversation?.messenger?.id"
+                    [lastSendId]="infoConversation?.messenger?.senderId"></app-messenger-box>
             </div>
             <!-- Chat input -->
             <div class="chat-input">
@@ -204,7 +226,7 @@
         </div>
         <!-- Chat Details -->
         <div *ngIf="!isMessengerBoxBlank" class="col-xxl-2 col-lg-2 col-md-2 col-2 bg-light d-none d-xxl-block">
-            <app-messenger-information></app-messenger-information>
+            <app-messenger-information [infoConversation]="infoConversation"></app-messenger-information>
         </div>
 
 
@@ -223,7 +245,7 @@
 </div>
 
 <app-call-modal [infoConversation]="infoConversation" [infoCallSession]="this.infoCallSession"></app-call-modal>
-<app-send-invitation-modal></app-send-invitation-modal>
+<app-send-invitation-modal class="send-request" [infoConversation]="infoConversation"></app-send-invitation-modal>
 
 <div class="modal-overlay" *ngIf="isCallRequest==true">
     <div class="video-call-modal">
@@ -236,7 +258,7 @@
             <button class="btn btn-danger reject-button" (click)="handleRejectCallVideoRequest()">
                 <i class="bi bi-telephone-x"></i> Từ chối
             </button>
-            <button class="btn btn-success accept-button" (click)="handleAcceptCallVideoRequest()" >
+            <button class="btn btn-success accept-button" (click)="handleAcceptCallVideoRequest()">
                 <i class="bi bi-camera-video"></i> Trả lời
             </button>
         </div>

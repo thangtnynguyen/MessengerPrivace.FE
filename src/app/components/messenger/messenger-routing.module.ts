@@ -5,6 +5,10 @@ import { MessengerBoxComponent } from './messenger-box/messenger-box.component';
 
 const routes: Routes = [
   {
+    path: '',
+    component: MessengerContainerComponent
+  },
+  {
     path: 'list',
     component: MessengerContainerComponent
   },
